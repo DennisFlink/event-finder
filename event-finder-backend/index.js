@@ -1,15 +1,29 @@
-require("dotenv").config(); 
-const express = require("express");
+import dotenv from "dotenv";
+dotenv.config();
+
+import  {createUsers}  from "./seed/createUser.js";
+import express from "express";
+import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 const app = express();
+const connectionString = process.env.MONGODB_URL;
+console.log(connectionString);
 app.listen(3000, () => console.log("Server is running"));
-console.log(process.env.MONGODB_URL);
 
-const mongoose = require("mongoose");
 
-mongoose.connect(
-    process.env.MONGODB_URL, 
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }
-);
+
+mongoose.connect(connectionString)
+.then(() => {
+    console.log('Connected to MongoDB');
+    createUsers();
+})
+.catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+});
+
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to db');
+});
+
+
+
