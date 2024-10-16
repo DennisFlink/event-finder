@@ -1,25 +1,28 @@
 import mongoose from "mongoose";
 const eventSchema = new mongoose.Schema({
-    title: {String, required: true},
-    description: {String},
-    startDate: {Date, required: true},
-    endDate: {Date, required: true},
-    location: {String, required: true},
-    maxAttendees: {Number},
+    title: { type: String, required: true },
+    description: { type: String },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    location: { type: String, required: true },
+    maxAttendees: { type: Number },
     attendees: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "users",
     },
-    isPublic: {Boolean,default: true},
-    secretInfo: {String},
-    isPaymentRequired: {Boolean, default: false},
-    isRegisterRequired: {Boolean, default: false},
-    price: {Number},
-    needApproval: {Boolean, default: false},
+    isPublic: { type: Boolean, default: true },
+    secretInfo: { type: String },
+    isPaymentRequired: { type: Boolean, default: false },
+    isRegisterRequired: { type: Boolean, default: false },
+    price: { type: Number },
+    needApproval: { type: Boolean, default: false },
     userJoinRequests: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "users"
     },
     images: [String],
-    ageLimit: {Number}, 
+    ageLimit: { type: Number },
 });
+
+const Events = mongoose.model("events", eventSchema);
+export default Events;
