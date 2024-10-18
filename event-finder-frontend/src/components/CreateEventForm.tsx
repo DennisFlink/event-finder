@@ -36,7 +36,7 @@ const formSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
-  location: z.string(),
+  location: z.string().min(1),
   maxAttendees: z.coerce.number().int().positive().optional(),
   isPrivate: z.boolean(),
   secretInfo: z.string().optional(),
@@ -91,7 +91,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       startDate: values.date.from,
       endDate: values.date.to,
       location: values.location,
-      maxAttendees: values.maxAttendees,
+      maxAttendees: values.maxAttendees ? values.maxAttendees : 0,
       attendees: [],
       isPrivate: values.isPrivate,
       secretInfo: values.secretInfo,
@@ -101,7 +101,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       isRegisterRequired: values.isRegisterRequired,
       needApproval: values.needApproval,
       images: values.images,
-      ageLimit: values.ageLimit,
+      ageLimit: values.ageLimit ? values.ageLimit : 0,
       authorId: "1", // Ändra till inloggad användare id
     };
     const response = await createEvent(newEvent);

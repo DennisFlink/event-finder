@@ -4,6 +4,8 @@ import IEvent from "interface/eventTypes";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const createEvent = async (newEvent: IEvent): Promise<IEvent> => {
+  console.log("New event:", newEvent);
+
   try {
     const response = await axios.post(`${BASE_URL}/events`, newEvent);
 
