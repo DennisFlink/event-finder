@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
+// import { IUser } from "../interface/userTypes";
 
 const userSchema = new Schema({
 	email: { type: String, required: true },
