@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Events from "../../models/eventSchema.js";
+import Events from "../../models/eventSchema.ts";
 const router = Router();
 
 

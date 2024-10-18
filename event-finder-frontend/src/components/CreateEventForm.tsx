@@ -26,8 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { start } from "repl";
-
+import IEvent from "../../interface/eventTypes";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(10).max(500),
@@ -36,16 +35,16 @@ const formSchema = z.object({
     to: z.date(),
   }),
   location: z.string(),
-  maxParticipants: z.number().int().positive(),
+  maxAttendees: z.coerce.number().int().positive(),
   isPrivate: z.boolean(),
   secretInfo: z.string().optional(),
   isPaymentRequired: z.boolean(),
-  price: z.number().int().positive().optional(),
+  price: z.coerce.number().int().positive().optional(),
   isRegisterRequired: z.boolean(),
   needApproval: z.boolean(),
-  image: z.string().url().optional(),
+  images: z.array(z.string()).optional(),
   isAgeLimit: z.boolean(),
-  ageLimit: z.number().int().positive().optional(),
+  ageLimit: z.coerce.number().int().positive().optional(),
 });
 
 type CreateEventFormProps = {};
@@ -66,41 +65,41 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       description: "",
       date: pickedDateRange,
       location: "",
-      maxParticipants: 0,
+      maxAttendees: 0,
       isPrivate: false,
       secretInfo: "",
       isPaymentRequired: false,
       price: 0,
       isRegisterRequired: false,
       needApproval: false,
-      image: "",
-      isAgeLimit: false,
+      images: [""],
       ageLimit: 0,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
-
-    const newEvent = {
+    const newEvent: IEvent = {
       title: values.title,
       description: values.description,
       startDate: values.date.from,
       endDate: values.date.to,
       location: values.location,
-      maxParticipants: values.maxParticipants,
+      maxAttendees: values.maxAttendees,
+      attendees: [],
       isPrivate: values.isPrivate,
       secretInfo: values.secretInfo,
       isPaymentRequired: values.isPaymentRequired,
+      userJoinRequests: [],
       price: values.price,
       isRegisterRequired: values.isRegisterRequired,
       needApproval: values.needApproval,
-      image: values.image,
-      isAgeLimit: values.isAgeLimit,
+      images: values.images,
       ageLimit: values.ageLimit,
+      authorId: "1", // Ändra till inloggad användare id
     };
+
+    console.log(newEvent);
   }
 
   return (
@@ -204,7 +203,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
             />
             <FormField
               control={form.control}
-              name="maxParticipants"
+              name="maxAttendees"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Max Participants</FormLabel>
@@ -327,7 +326,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
 
             <FormField
               control={form.control}
-              name="image"
+              name="images"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Image</FormLabel>
