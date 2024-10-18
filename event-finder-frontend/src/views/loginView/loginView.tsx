@@ -11,7 +11,8 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import axios from 'axios';
+import { createUser } from '@/services/userService';
+import { IUser } from 'interface/userTypes';
 type loginView = {};
 const signupSchema = z.object({ username: z.string().min(2), email: z.string().email(), password: z.string().min(8), date: z.coerce.date() });
 
@@ -36,9 +37,16 @@ export const LoginView: React.FC<loginView> = () => {
          password: '',
       },
    });
-   const onSubmit = (data: z.infer<typeof signupSchema>) => {
-      console.log(data);
+   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
+      const newUser: IUser = { ...data, username: data.username, email: data.email, password: data.password, bod: data.date };
+      const createdUser = await createUser(newUser);
+      if ((createdUser as IUser).email) {
+         console.log('User created', createdUser);
+      } else {
+         console.log(createdUser);
+      }
    };
+
    return (
       <div className="h-screen flex justify-center items-center">
          {isSignup ? (
