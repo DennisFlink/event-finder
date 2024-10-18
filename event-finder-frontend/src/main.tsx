@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import CreateEventModal from './components/CreateEventModal.tsx';
-import OwnEvents from './views/OwnEvents/OwnEvents.tsx';
+import EventList from './views/EventList/EventList.tsx';
 
 const router = createBrowserRouter([
 	{
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: 'createdEvents',
-				element: <OwnEvents />,
+				element: <EventList />,
 			},
 		],
 	},
