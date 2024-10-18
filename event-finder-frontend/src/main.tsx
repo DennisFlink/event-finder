@@ -12,16 +12,12 @@ const router = createBrowserRouter([
 
 		children: [
 			{
-				path: 'login',
-				element: <div>header</div>,
+				path: 'team',
+				element: <div>hej</div>,
 			},
 			{
 				path: 'createdEvents',
-				element: (
-					<div>
-						<OwnEvents />
-					</div>
-				),
+				element: <OwnEvents />,
 			},
 		],
 	},
