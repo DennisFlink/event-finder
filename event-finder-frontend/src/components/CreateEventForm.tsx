@@ -61,7 +61,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
   });
 
   const { toast } = useToast();
-
+  const [isLoading, setIsLoading] = React.useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,6 +84,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     console.log(values);
     const newEvent: IEvent = {
       title: values.title,
@@ -103,10 +104,13 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       authorId: "1", // Ändra till inloggad användare id
     };
     const response = await createEvent(newEvent);
+    setIsLoading(false);
+    form.reset();
     toast({
       title: `${response.title} created`,
       description: `Event has been created`,
     });
+
     navigate(-1);
   }
 
@@ -385,7 +389,9 @@ export default function CreateEventForm({}: CreateEventFormProps) {
           </div>
         </ScrollArea>
 
-        <Button type="submit">Submit</Button>
+        <Button disabled={isLoading} type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

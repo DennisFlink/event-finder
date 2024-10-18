@@ -23,11 +23,6 @@ export default function Header({}: HeaderProps) {
     console.log("logging out...");
   };
 
-  const handleCreateEvent = () => {
-    console.log("creating event...");
-    location.pathname === "/events/create";
-  };
-
   const handleSeeEvents = () => {
     console.log("seeing events...");
   };
@@ -38,7 +33,7 @@ export default function Header({}: HeaderProps) {
 
   return (
     <>
-      <header className="p-5 shadow-lg flex flex justify-between items-center">
+      <header className="p-5 shadow-lg flex justify-between items-center">
         {/* visa endast om current page inte är home */}
         <Button variant={"ghost"} onClick={() => handleGoBack()}>
           <ArrowLeft />

@@ -24,7 +24,7 @@ export default function CreateEventModal({}: CreateEventModalProps) {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleModalClose}>
-        <DialogContent className="w-1/2">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Create an event</DialogTitle>
             <DialogDescription>
