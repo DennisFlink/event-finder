@@ -1,12 +1,14 @@
-import { Outlet } from 'react-router';
+import { Outlet } from "react-router";
+import Header from "./components/Header";
 
 function App() {
-   return (
-      <>
-         <div>hej</div>
-         <Outlet />
-      </>
-   );
+  return (
+    <>
+      <Header />
+      <div>hej</div>
+      <Outlet />
+    </>
+  );
 }
 
 export default App;
