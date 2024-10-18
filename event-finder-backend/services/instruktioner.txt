@@ -1,0 +1,1 @@
+Skapar logiken för appen. Exempelvis spara till databas

@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import {userRouter} from './users/users.js';
-import {eventRouter} from './events/events.js';
+import { userRouter } from './users/users.js';
+import { eventRouter } from './events/events.js';
 const router = Router();
 
 router.use('/users', userRouter);
