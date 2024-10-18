@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import axios from 'axios';
 type loginView = {};
 const signupSchema = z.object({ username: z.string().min(2), email: z.string().email(), password: z.string().min(8), date: z.coerce.date() });
 
@@ -69,7 +70,7 @@ export const LoginView: React.FC<loginView> = () => {
                               <FormItem>
                                  <FormLabel>Email</FormLabel>
                                  <FormControl>
-                                    <Input placeholder="email" {...field} />
+                                    <Input placeholder="Email" {...field} />
                                  </FormControl>
                                  <FormDescription>This is your email</FormDescription>
                                  <FormMessage />
@@ -106,7 +107,16 @@ export const LoginView: React.FC<loginView> = () => {
                                        </FormControl>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0" align="start">
-                                       <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date('1900-01-01')} initialFocus />
+                                       <Calendar
+                                          mode="single"
+                                          captionLayout="dropdown-buttons"
+                                          selected={field.value}
+                                          onSelect={field.onChange}
+                                          fromYear={1900}
+                                          toYear={new Date().getFullYear()}
+                                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                                          initialFocus
+                                       />
                                     </PopoverContent>
                                  </Popover>
                                  <FormMessage />
