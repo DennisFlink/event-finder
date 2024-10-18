@@ -7,7 +7,7 @@ import * as React from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
-
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -27,6 +27,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import IEvent from "../../interface/eventTypes";
+import { createEvent } from "@/services/eventService";
+import { useNavigate } from "react-router";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(10).max(500),
@@ -35,7 +37,7 @@ const formSchema = z.object({
     to: z.date(),
   }),
   location: z.string(),
-  maxAttendees: z.coerce.number().int().positive(),
+  maxAttendees: z.coerce.number().int().positive().optional(),
   isPrivate: z.boolean(),
   secretInfo: z.string().optional(),
   isPaymentRequired: z.boolean(),
@@ -50,12 +52,15 @@ const formSchema = z.object({
 type CreateEventFormProps = {};
 
 export default function CreateEventForm({}: CreateEventFormProps) {
+  const navigate = useNavigate();
   const [pickedDateRange, setPickedDateRange] = React.useState<
     DateRange | undefined
   >({
     from: new Date(),
     to: addDays(new Date(), 1),
   });
+
+  const { toast } = useToast();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -65,19 +70,20 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       description: "",
       date: pickedDateRange,
       location: "",
-      maxAttendees: 0,
+      maxAttendees: undefined,
       isPrivate: false,
       secretInfo: "",
       isPaymentRequired: false,
-      price: 0,
+      price: undefined,
       isRegisterRequired: false,
       needApproval: false,
       images: [""],
-      ageLimit: 0,
+      isAgeLimit: false,
+      ageLimit: undefined,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     const newEvent: IEvent = {
       title: values.title,
@@ -98,8 +104,12 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       ageLimit: values.ageLimit,
       authorId: "1", // Ändra till inloggad användare id
     };
-
-    console.log(newEvent);
+    const response = await createEvent(newEvent);
+    toast({
+      title: `${response.title} created`,
+      description: `Event has been created`,
+    });
+    navigate(-1);
   }
 
   return (
@@ -278,7 +288,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" placeholder="1000" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -367,7 +377,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" placeholder="18" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
