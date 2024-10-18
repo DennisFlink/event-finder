@@ -10,7 +10,7 @@ const eventSchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: "users",
     },
-    isPublic: { type: Boolean, default: true },
+    isPrivate: { type: Boolean, default: false },
     secretInfo: { type: String },
     isPaymentRequired: { type: Boolean, default: false },
     isRegisterRequired: { type: Boolean, default: false },

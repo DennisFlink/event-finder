@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "./ui/button";
+import CreateEventModal from "./CreateEventModal";
+import { Link, useLocation } from "react-router-dom";
 
 type HeaderProps = {
   // TODO
@@ -16,12 +18,14 @@ type HeaderProps = {
 };
 
 export default function Header({}: HeaderProps) {
+  const location = useLocation();
   const handleLogout = () => {
     console.log("logging out...");
   };
 
   const handleCreateEvent = () => {
     console.log("creating event...");
+    location.pathname === "/events/create";
   };
 
   const handleSeeEvents = () => {
@@ -52,8 +56,8 @@ export default function Header({}: HeaderProps) {
             <DropdownMenuContent>
               <DropdownMenuLabel>My account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleCreateEvent()}>
-                Create new event
+              <DropdownMenuItem>
+                <Link to="/events/create">Create new event</Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleSeeEvents()}>
                 See your events
