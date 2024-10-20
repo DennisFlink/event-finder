@@ -1,15 +1,10 @@
 import axios from 'axios';
 import { useState } from 'react';
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '@/components/ui/accordion';
+import { Accordion, AccordionItem } from '@/components/ui/accordion';
 import IEvent from 'interface/eventTypes';
 
 export default function EventList() {
-	const userId = '';
+	const userId = ''; //temp
 	const [eventsList, setEventsList] = useState<IEvent[]>([]);
 
 	const getCreatedEvents = async () => {
@@ -46,14 +41,7 @@ export default function EventList() {
 				eventsList.map((event, index) => (
 					<AccordionItem
 						key={index}
-						value={`item-${index}`}>
-						<AccordionTrigger>
-							<h1 className="mx-2">{event.title}</h1>
-						</AccordionTrigger>
-						<AccordionContent>
-							<div className="bg-red-700"></div>
-						</AccordionContent>
-					</AccordionItem>
+						value={`item-${index}`}></AccordionItem>
 				))
 			) : (
 				<p className="flex items-center justify-center">

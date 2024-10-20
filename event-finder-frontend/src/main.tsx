@@ -5,6 +5,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import CreateEventModal from './components/CreateEventModal.tsx';
 import EventList from './views/EventList/EventList.tsx';
+import AdminPanel from './views/AdminPanel/AdminPanel.tsx';
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
 			{
 				path: 'createdEvents',
 				element: <EventList />,
+			},
+			{
+				path: 'admin',
+				element: <AdminPanel />,
 			},
 		],
 	},
