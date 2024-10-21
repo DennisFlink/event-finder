@@ -31,6 +31,7 @@ export default function AdminPanel() {
       password: "adminoid",
       bod: new Date("2024-10-10T23:00:00.000+00:00"),
     };
+
     switch (action) {
       case "newUser": {
         await createUser(newUser);
