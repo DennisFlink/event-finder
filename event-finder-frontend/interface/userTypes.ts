@@ -4,7 +4,7 @@ export interface IUser {
    email: string;
    password: string;
    username: string;
-   bod: Date;
+   dob: Date;
    ignoredEvents?: {
       type: Types.ObjectId;
       ref: string;

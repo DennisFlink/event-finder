@@ -6,7 +6,7 @@ const userSchema = new Schema({
    email: { type: String, required: true },
    password: { type: String, required: true },
    username: { type: String, required: true },
-   bod: { type: Date, required: true },
+   dob: { type: Date, required: true },
    ignoredEvents: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'events',

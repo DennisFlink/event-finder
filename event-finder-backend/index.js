@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import apiRouter from './routes/routes.js';
-import users from './models/userSchema.js';
+
 const app = express();
 
 app.use(express.json());
@@ -17,7 +17,6 @@ mongoose
    .then(async () => {
       console.log('Connected to MongoDB');
       // createEvents();
-      await users.deleteMany({});
    })
    .catch((error) => {
       console.error('Error connecting to MongoDB:', error);
