@@ -14,7 +14,7 @@ import { createUser } from '@/services/userService';
 import { IUser } from 'interface/userTypes';
 import { Link } from 'react-router-dom';
 type loginView = {};
-const signupSchema = z.object({ username: z.string().min(2), email: z.string().email(), password: z.string().min(8), date: z.coerce.date() });
+const signupSchema = z.object({ username: z.string().min(2), email: z.string().email(), password: z.string().min(3), date: z.coerce.date() });
 
 export const SignupView: React.FC<loginView> = () => {
    const signupForm = useForm<z.infer<typeof signupSchema>>({
@@ -30,6 +30,7 @@ export const SignupView: React.FC<loginView> = () => {
       const createdUser = await createUser(newUser);
       if ((createdUser as IUser).email) {
          console.log('User created', createdUser);
+         signupForm.reset();
       } else {
          console.log(createdUser);
       }

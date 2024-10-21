@@ -10,7 +10,7 @@ import { handleLoginUser } from '@/services/userService';
 import { IUser } from 'interface/userTypes';
 
 type loginView = {};
-const loginSchema = z.object({ email: z.string().email(), password: z.string().min(8) });
+const loginSchema = z.object({ email: z.string().email(), password: z.string().min(3) });
 
 export const LoginView: React.FC<loginView> = () => {
    const loginForm = useForm<z.infer<typeof loginSchema>>({

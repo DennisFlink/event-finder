@@ -1,6 +1,5 @@
-import { createUser } from '../services/userService.js';
-import User from '../models/userSchema.js';
-import bcrypt from 'bcrypt';
+import { createUser, authenticateUser } from '../services/userService.js';
+
 const createUserController = async (req, res) => {
    try {
       const newUser = req.body;
@@ -16,17 +15,15 @@ const createUserController = async (req, res) => {
 };
 
 const loginController = async (req, res) => {
+   const { email, password } = req.body;
    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-         return res.status(400).json({ message: 'User not found' });
-      }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-         return res.status(400).json({ message: 'Invalid password' });
-      }
+      const user = await authenticateUser(email, password);
+      res.status(200).json({ message: 'Login successful', user });
    } catch (error) {
-      res.status(500).json([{ MESSAGE: 'ERROR', error }]);
+      if (error.message === 'User not found' || error.message === 'Invalid password') {
+         return res.status(400).json({ message: error.message });
+      }
+      res.status(500).json({ message: 'ERROR', error });
    }
 };
 
