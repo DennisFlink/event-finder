@@ -5,14 +5,14 @@ export default interface IEvent {
   endDate: Date;
   location: string;
   maxAttendees?: number;
-  attendees: string[];
+  attendees?: string[];
   isPrivate?: boolean;
   secretInfo?: string;
   isPaymentRequired?: boolean;
   isRegisterRequired?: boolean;
   price?: number;
   needApproval?: boolean;
-  userJoinRequests: string[];
+  userJoinRequests?: string[];
   images?: string[];
   ageLimit?: number;
   authorId: string;
