@@ -1,15 +1,16 @@
 import IEvent from "interface/eventTypes";
+import IUser from "interface/userTypes";
 import "./styles.css";
 import { createEvent } from "@/services/eventService";
 
 export default function AdminPanel() {
   const handleClick = async (action: string) => {
-    console.log(action);
+    console.log("admin action: ", action);
     const newEvent: IEvent = {
-      title: "TestEvent",
+      title: "Admin test event",
       description: "TestDesc",
-      startDate: new Date("2024-11-01T18:00:00.000+00:00"),
-      endDate: new Date("2024-11-02T18:00:00.000+00:00"),
+      startDate: new Date("2025-11-01T18:00:00.000+00:00"),
+      endDate: new Date("2025-11-02T18:00:00.000+00:00"),
       location: "Lidköping",
       maxAttendees: 0,
       isPrivate: false,
@@ -22,14 +23,27 @@ export default function AdminPanel() {
       ageLimit: 0,
       authorId: "admin",
     };
+    const newUser: IUser = {
+      email: "test@mail.com",
+      password: "password",
+      username: "test",
+      age: 20,
+      ignoredEvents: [],
+      isOrganizer: false,
+      createdEvents: [],
+      joinedEvents: [],
+      awaitingApprovalEvents: [],
+    };
 
     switch (action) {
-      case "newUser":
+      case "newUser": {
+        await createUser(newUser);
         break;
-      case "newEvent":
-        const test = await createEvent(newEvent);
-        console.log("created event");
+      }
+      case "newEvent": {
+        await createEvent(newEvent);
         break;
+      }
       default:
         throw new Error("unknown action");
     }
