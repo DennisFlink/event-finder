@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import apiRouter from './routes/routes.js';
+import users from './models/userSchema.js';
 const app = express();
 
 app.use(express.json());
@@ -12,14 +13,15 @@ dotenv.config();
 const connectionString = process.env.MONGODB_URL;
 
 mongoose
-	.connect(connectionString)
-	.then(() => {
-		console.log('Connected to MongoDB');
-		// createEvents();
-	})
-	.catch((error) => {
-		console.error('Error connecting to MongoDB:', error);
-	});
+   .connect(connectionString)
+   .then(async () => {
+      console.log('Connected to MongoDB');
+      // createEvents();
+      await users.deleteMany({});
+   })
+   .catch((error) => {
+      console.error('Error connecting to MongoDB:', error);
+   });
 mongoose.connection.on('connected', () => {
-	console.log('Mongoose connected to db');
+   console.log('Mongoose connected to db');
 });

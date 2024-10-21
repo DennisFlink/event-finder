@@ -1,7 +1,8 @@
 import IEvent from "interface/eventTypes";
-import IUser from "interface/userTypes";
+import { IUser } from "interface/userTypes";
 import "./styles.css";
 import { createEvent } from "@/services/eventService";
+import { createUser } from "@/services/userService";
 
 export default function AdminPanel() {
   const handleClick = async (action: string) => {
@@ -23,18 +24,13 @@ export default function AdminPanel() {
       ageLimit: 0,
       authorId: "admin",
     };
-    const newUser: IUser = {
-      email: "test@mail.com",
-      password: "password",
-      username: "test",
-      age: 20,
-      ignoredEvents: [],
-      isOrganizer: false,
-      createdEvents: [],
-      joinedEvents: [],
-      awaitingApprovalEvents: [],
-    };
 
+    const newUser: IUser = {
+      username: "adminTestUser",
+      email: "admin@gmail.com",
+      password: "adminoid",
+      bod: new Date("2024-10-10T23:00:00.000+00:00"),
+    };
     switch (action) {
       case "newUser": {
         await createUser(newUser);
