@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import User from '../../models/userSchema.js';
-import { createUserController, loginController } from '../../controller/userController.js';
+import {
+	createUserController,
+	loginController,
+	getAllUsersController,
+	getUserByIdController,
+} from '../../controller/userController.js';
 const router = Router();
 
 router.post('/signup', createUserController);
@@ -10,5 +15,11 @@ router.post('/signup', createUserController);
    res.status(200).json(users);
 }); */
 router.post('/login', loginController);
+
+//Get a list of all users
+router.get('/all', getAllUsersController);
+
+//get a user by id
+router.get('/:id', getUserByIdController);
 
 export const userRouter = router;
