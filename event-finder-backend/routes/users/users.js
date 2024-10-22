@@ -23,6 +23,6 @@ router.get('/all', getAllUsersController);
 //get a user by id
 router.get('/:id', getUserByIdController);
 
-router.get('/delete/:id', deleteUserByIdController);
+router.delete('/delete/:id', deleteUserByIdController);
 
 export const userRouter = router;
