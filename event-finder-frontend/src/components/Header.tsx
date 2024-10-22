@@ -22,11 +22,6 @@ export default function Header({}: HeaderProps) {
   const handleLogout = () => {
     console.log("logging out...");
   };
-
-  const handleSeeEvents = () => {
-    console.log("seeing events...");
-  };
-
   const handleGoBack = () => {
     console.log("going back...");
   };
@@ -54,8 +49,8 @@ export default function Header({}: HeaderProps) {
               <DropdownMenuItem>
                 <Link to="/events/create">Create new event</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSeeEvents()}>
-                See your events
+              <DropdownMenuItem>
+                <Link to="/createdEvents">See your events</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleLogout()}>
