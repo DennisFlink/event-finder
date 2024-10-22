@@ -1,16 +1,18 @@
 import axios from 'axios';
-import { useState } from 'react';
-import { Accordion, AccordionItem } from '@/components/ui/accordion';
+import { useEffect, useState } from 'react';
+import { Accordion } from '@/components/ui/accordion';
 import IEvent from 'interface/eventTypes';
+import EventListAccordionItem from '@/components/EventListAccordionItem';
 
 export default function EventList() {
 	const userId = ''; //temp
 	const [eventsList, setEventsList] = useState<IEvent[]>([]);
 
-	const getCreatedEvents = async () => {
+	const getUserEvents = async () => {
 		try {
+			console.log('getting user events');
 			const response = await axios.get(
-				`http://localhost:3000/api/events/author/0v5t6mgnw83v03n65w8g7`, //replace with logged in user id.
+				`http://localhost:3000/api/events/author/${userId}`, //replace with logged in user id.
 			);
 			setEventsList(response.data);
 		} catch (e) {
@@ -20,6 +22,7 @@ export default function EventList() {
 
 	const getAllEvents = async () => {
 		try {
+			console.log('getting all events');
 			const response = await axios.get(`http://localhost:3000/api/events`);
 			setEventsList(response.data);
 		} catch (e) {
@@ -27,11 +30,13 @@ export default function EventList() {
 		}
 	};
 
-	if (userId!.length > 1) {
-		getCreatedEvents();
-	} else {
-		getAllEvents();
-	}
+	useEffect(() => {
+		if (userId.length > 1) {
+			getUserEvents();
+		} else {
+			getAllEvents();
+		}
+	}, [userId]);
 
 	return (
 		<Accordion
@@ -39,14 +44,13 @@ export default function EventList() {
 			collapsible>
 			{eventsList.length > 0 ? (
 				eventsList.map((event, index) => (
-					<AccordionItem
-						key={index}
-						value={`item-${index}`}></AccordionItem>
+					<EventListAccordionItem
+						event={event}
+						index={index}
+					/>
 				))
 			) : (
-				<p className="flex items-center justify-center">
-					You have not created any events...
-				</p>
+				<p className="flex items-center justify-center">No events to show...</p>
 			)}
 		</Accordion>
 	);
