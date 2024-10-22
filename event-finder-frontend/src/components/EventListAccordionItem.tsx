@@ -5,21 +5,22 @@ import {
 } from '@/components/ui/accordion';
 import IEvent from 'interface/eventTypes';
 
-type eventProp = {
+type event = {
 	event: IEvent;
 	index: number;
 };
 
-export default function EventListAccordionItem(event: eventProp) {
+export default function EventListAccordionItem(event: event) {
+	const getAuhtorDataById = () => {};
+
 	return (
-		<AccordionItem
-			key={event.index}
-			value={`item-${event.index}`}>
+		<AccordionItem value={`item-${event.index}`}>
 			<AccordionTrigger>{event.event.title}</AccordionTrigger>
 			<AccordionContent>
 				<div>
-					<h1>{event.event.authorId}</h1>
-					{event.event.description}
+					<h1>Organized by: {event.event.authorId}</h1>
+					{/* replace authorId with author name, make function to get authorData by author name? */}
+					<p>{event.event.description}</p>
 				</div>
 			</AccordionContent>
 		</AccordionItem>

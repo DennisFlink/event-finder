@@ -20,6 +20,10 @@ const router = createBrowserRouter([
 				element: <LoginView />,
 			},
 			{
+				path: 'signup',
+				element: <SignupView />,
+			},
+			{
 				path: 'events/create',
 				element: <CreateEventModal />,
 			},
