@@ -20,6 +20,7 @@ const createUser = async (user) => {
    const newUser = new User(user);
    return await newUser.save();
 };
+
 const authenticateUser = async (email, password) => {
    const user = await User.findOne({ email: email });
    if (!user) {
@@ -32,10 +33,7 @@ const authenticateUser = async (email, password) => {
    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
       expiresIn: '1 hour',
    });
-   const verifyToken = (token) => {
-      return jwt.verify(token, process.env.SECRET_KEY);
-   };
-   console.log(verifyToken(token));
+
    return { user, token };
 };
 export { createUser, authenticateUser };

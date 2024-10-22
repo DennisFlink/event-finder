@@ -23,8 +23,14 @@ export const createUser = async (user: IUser) => {
 
 export const handleLoginUser = async (user: Partial<IUser>) => {
 	try {
-		const response = await axios.post(`${BASE_URL}/users/login`, user);
-
+		const response = await axios.post(
+			'http://localhost:3000/api/users/login',
+			user,
+			{
+				withCredentials: true,
+			},
+		);
+		console.log(response.data);
 		return response.data;
 	} catch (error: unknown) {
 		// Check if the error is an AxiosError
