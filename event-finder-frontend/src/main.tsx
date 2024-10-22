@@ -16,6 +16,10 @@ const router = createBrowserRouter([
 
 		children: [
 			{
+				path: '/',
+				element: <EventList />,
+			},
+			{
 				path: 'login',
 				element: <LoginView />,
 			},
