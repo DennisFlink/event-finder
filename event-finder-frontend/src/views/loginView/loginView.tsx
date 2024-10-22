@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { handleLoginUser } from '@/services/userService';
 import { IUser } from 'interface/userTypes';
-
+import { useNavigate } from 'react-router-dom';
 type loginView = {};
 const loginSchema = z.object({ email: z.string().email(), password: z.string().min(3) });
 
 export const LoginView: React.FC<loginView> = () => {
+   const navigate = useNavigate();
+
    const loginForm = useForm<z.infer<typeof loginSchema>>({
       resolver: zodResolver(loginSchema),
       defaultValues: {
@@ -22,9 +24,14 @@ export const LoginView: React.FC<loginView> = () => {
    });
    const onSubmit = async (data: z.infer<typeof loginSchema>) => {
       const loginUser = data as Partial<IUser>;
-      await handleLoginUser(loginUser);
-   };
+      try {
+         await handleLoginUser(loginUser);
 
+         navigate('/');
+      } catch (error) {
+         console.error('Login failed:', error);
+      }
+   };
    return (
       <div className="h-screen flex justify-center items-center flex-col">
          <div className="w-full flex items-center justify-center"></div>
