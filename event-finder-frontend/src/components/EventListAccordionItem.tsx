@@ -58,7 +58,7 @@ export default function EventListAccordionItem(event: event) {
 							<img
 								src="/SVGs/trashcan.svg"
 								alt="del"
-								className="text-[.6rem]  w-6 h-6"
+								className="text-[.6rem]  min-w-6 min-h-6"
 							/>
 						</button>
 					</div>
