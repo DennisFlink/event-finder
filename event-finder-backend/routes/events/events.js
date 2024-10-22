@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import Events from '../../models/eventSchema.js';
-import { createEventController } from '../../controller/eventController.js';
+import {
+	createEventController,
+	deleteEventByIdController,
+} from '../../controller/eventController.js';
 const router = Router();
 
 router.get('/', async (req, res) => {
@@ -9,5 +12,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', createEventController);
+
+router.delete('/delete/:id', deleteEventByIdController);
 
 export const eventRouter = router;

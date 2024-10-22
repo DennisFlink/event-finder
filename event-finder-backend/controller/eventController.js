@@ -1,4 +1,5 @@
 import { createEvent } from '../services/eventService.js';
+import Events from '../models/eventSchema.js';
 
 const createEventController = async (req, res) => {
 	try {
@@ -14,10 +15,10 @@ const createEventController = async (req, res) => {
 const deleteEventByIdController = async (req, res) => {
 	const eventId = req.params.id;
 	try {
-		const event = await User.findByIdAndDelete(eventId);
-		res.status(200).json({ message: `success, remove user: ${event} ` });
+		const event = await Events.findByIdAndDelete(eventId);
+		res.status(200).json({ message: `success, remove event: ${event} ` });
 	} catch (error) {
-		res.status(500).json({ message: 'error', error });
+		res.status(500).json({ message: 'error deleting event', error });
 	}
 };
 

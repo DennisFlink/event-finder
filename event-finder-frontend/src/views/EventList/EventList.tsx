@@ -6,13 +6,14 @@ import EventListAccordionItem from '@/components/EventListAccordionItem';
 
 export default function EventList() {
 	const userId = ''; //temp
+	const BASE_URL = import.meta.env.VITE_BASE_URL;
 	const [eventsList, setEventsList] = useState<IEvent[]>([]);
 
 	const getUserEvents = async () => {
 		try {
 			console.log('getting user events');
 			const response = await axios.get(
-				`http://localhost:3000/api/events/author/${userId}`, //replace with logged in user id.
+				`${BASE_URL}/events/author/${userId}`, //replace with logged in user id.
 			);
 			setEventsList(response.data);
 		} catch (e) {
@@ -23,7 +24,7 @@ export default function EventList() {
 	const getAllEvents = async () => {
 		try {
 			console.log('getting all events');
-			const response = await axios.get(`http://localhost:3000/api/events`);
+			const response = await axios.get(`${BASE_URL}/events`);
 			setEventsList(response.data);
 		} catch (e) {
 			console.error('Error getting all events: ', e);
@@ -31,7 +32,7 @@ export default function EventList() {
 	};
 
 	useEffect(() => {
-		if (userId.length > 1) {
+		if (userId.length > 1000) {
 			getUserEvents();
 		} else {
 			getAllEvents();
@@ -39,9 +40,7 @@ export default function EventList() {
 	}, [userId]);
 
 	return (
-		<Accordion
-			type="single"
-			collapsible>
+		<Accordion type="single">
 			{eventsList.length > 0 ? (
 				eventsList.map((event, index) => (
 					<EventListAccordionItem
