@@ -36,7 +36,7 @@ const getAllUsersController = async (req, res) => {
 		const users = await User.find();
 		res.status(200).json({ message: 'success', users });
 	} catch (error) {
-		res.status(500).json({ message: 'error: ', error });
+		res.status(500).json({ message: 'error', error });
 	}
 };
 
@@ -50,9 +50,20 @@ const getUserByIdController = async (req, res) => {
 	}
 };
 
+const deleteUserByIdController = async (req, res) => {
+	const userId = req.params.id;
+	try {
+		const user = await User.findByIdAndDelete(userId);
+		res.status(200).json({ message: `success, remove user: ${user} ` });
+	} catch (error) {
+		res.status(500).json({ message: 'error', error });
+	}
+};
+
 export {
 	createUserController,
 	loginController,
 	getAllUsersController,
 	getUserByIdController,
+	deleteUserByIdController,
 };

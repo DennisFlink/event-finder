@@ -5,6 +5,7 @@ import {
 	loginController,
 	getAllUsersController,
 	getUserByIdController,
+	deleteUserByIdController,
 } from '../../controller/userController.js';
 const router = Router();
 
@@ -21,5 +22,7 @@ router.get('/all', getAllUsersController);
 
 //get a user by id
 router.get('/:id', getUserByIdController);
+
+router.get('/delete/:id', deleteUserByIdController);
 
 export const userRouter = router;
