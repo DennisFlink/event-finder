@@ -5,7 +5,7 @@ import { eventRouter } from './events/events.js';
 import { eventByAuthorRouter } from './events/eventsByAuthor.js';
 const router = Router();
 
-router.use('/users', cors(), userRouter);
+router.use('/users', userRouter);
 router.use('/events', cors(), eventRouter);
 router.use('/events/author', cors(), eventByAuthorRouter);
 export default router;
