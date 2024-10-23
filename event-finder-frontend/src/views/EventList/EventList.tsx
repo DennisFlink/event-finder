@@ -3,45 +3,77 @@ import { useEffect, useState } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import IEvent from 'interface/eventTypes';
 import EventListAccordionItem from '@/components/EventListAccordionItem';
+import { IUser } from 'interface/userTypes';
 
 export default function EventList() {
-   const userId = ''; //temp
-   const BASE_URL = import.meta.env.VITE_BASE_URL;
-   const [eventsList, setEventsList] = useState<IEvent[]>([]);
+	const BASE_URL = import.meta.env.VITE_BASE_URL;
+	const [eventsList, setEventsList] = useState<IEvent[]>([]);
+	const [user, setUser] = useState<IUser | null>({
+		_id: '',
+		email: 'tempemail',
+		password: 'password',
+		username: 'username',
+		dob: new Date('2024-01-01T00:00:00'),
+	});
 
-   const getUserEvents = async () => {
-      try {
-         console.log('getting user events');
-         const response = await axios.get(
-            `${BASE_URL}/events/author/${userId}` //replace with logged in user id.
-         );
-         setEventsList(response.data);
-      } catch (e) {
-         console.error('Error getting user events:', e);
-      }
-   };
+	const getUserEvents = async () => {
+		try {
+			const response = await axios.get(
+				`${BASE_URL}/events/author/${user!._id}`,
+			);
+			setEventsList(response.data);
+		} catch (e) {
+			console.error('Error getting user events:', e);
+		}
+	};
 
-   const getAllEvents = async () => {
-      try {
-         const response = await axios.get(`${BASE_URL}/events`);
+	const getAllEvents = async () => {
+		try {
+			const response = await axios.get(`${BASE_URL}/events`);
 
-         setEventsList(response.data);
-      } catch (e) {
-         console.error('Error getting all events: ', e);
-      }
-   };
+			setEventsList(response.data);
+		} catch (e) {
+			console.error('Error getting all events: ', e);
+		}
+	};
 
-   useEffect(() => {
-      if (userId.length > 1000) {
-         getUserEvents();
-      } else {
-         getAllEvents();
-      }
-   }, [userId]);
+	//get all events if not currently on the /events/own page
+	useEffect(() => {
+		getAllEvents();
+	}, []);
 
-   return (
-      <Accordion type="single">
-         {eventsList.length > 0 ? eventsList.map((event, index) => <EventListAccordionItem event={event} index={index} />) : <p className="flex items-center justify-center">No events to show...</p>}
-      </Accordion>
-   );
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const response = await axios.get(
+					'http://localhost:3000/api/users/profile',
+					{
+						withCredentials: true,
+					},
+				);
+				setUser(response.data.user);
+			} catch (error) {
+				console.error('User not logged in');
+				setUser(null);
+			}
+		};
+
+		fetchUser();
+	}, []);
+
+	return (
+		<Accordion type="single">
+			{eventsList.length > 0 ? (
+				eventsList.map((event, index) => (
+					<EventListAccordionItem
+						event={event}
+						index={index}
+						key={index}
+					/>
+				))
+			) : (
+				<p className="flex items-center justify-center">No events to show...</p>
+			)}
+		</Accordion>
+	);
 }

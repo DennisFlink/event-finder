@@ -31,7 +31,6 @@ export default function EventListAccordionItem(event: event) {
 	}, [event.event.authorId]);
 
 	const deleteEvent = () => {
-		console.log('Delete event: ', event);
 		try {
 			axios.delete(`${BASE_URL}/events/delete/${event.event._id}`);
 		} catch (error) {
@@ -47,20 +46,25 @@ export default function EventListAccordionItem(event: event) {
 				<AccordionTrigger>
 					<div className="flex  w-full text-left flex-col">
 						{event.event.title}{' '}
-						{event.event.location.length > 1 && ` - ${event.event.location}`}
+						<div className="text-xs font-extralight">
+							{event.event.startDate.toString().substring(0, 10)}➡
+							{event.event.endDate.toString().substring(0, 10)}
+						</div>
 						<h2 className="underline text-xs">{authorName}</h2>
 					</div>
 				</AccordionTrigger>
 				<AccordionContent>
-					<div className="flex flex-row justify-between pr-6">
-						<p className="max-w-full">{event.event.description}</p>
-						<button onClick={() => deleteEvent()}>
-							<img
-								src="/SVGs/trashcan.svg"
-								alt="del"
-								className="text-[.6rem]  min-w-6 min-h-6"
-							/>
-						</button>
+					<div className="flex flex-col">
+						<div className=" flex flex-row w-full justify-between pr-6">
+							<p className="max-w-full">{event.event.description}</p>
+							<button onClick={() => deleteEvent()}>
+								<img
+									src="/SVGs/trashcan.svg"
+									alt="del"
+									className="text-[.6rem]  min-w-6 min-h-6 bg-white"
+								/>
+							</button>
+						</div>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
