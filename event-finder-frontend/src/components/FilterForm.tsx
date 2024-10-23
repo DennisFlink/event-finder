@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 import {
   Form,
   FormControl,
@@ -30,13 +31,15 @@ const formSchema = z.object({
   priceRange: z.array(z.number()).length(2).optional(),
   date: z
     .object({
-      from: z.date(),
-      to: z.date(),
+      from: z.date().optional(),
+      to: z.date().optional(),
     })
     .optional(),
   author: z.string().optional(),
   ageLimit: z.coerce.number().optional(),
   needsApproval: z.boolean().optional(),
+  totalAttendees: z.coerce.number().optional(),
+  isPaymentRequired: z.boolean().optional(),
 });
 
 type FilterFormProps = {};
@@ -45,8 +48,8 @@ export default function FilterForm({}: FilterFormProps) {
   const [pickedDateRange, setPickedDateRange] = React.useState<
     DateRange | undefined
   >({
-    from: new Date(),
-    to: addDays(new Date(), 1),
+    from: undefined,
+    to: undefined,
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,16 +58,20 @@ export default function FilterForm({}: FilterFormProps) {
       location: "",
       priceRange: [0, 9999],
       date: {
-        from: new Date(),
-        to: addDays(new Date(), 1),
+        from: undefined,
+        to: undefined,
       },
       author: "",
       ageLimit: 0,
       needsApproval: false,
+      totalAttendees: undefined,
+      isPaymentRequired: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("StartDate", values.date?.from);
+    console.log("EndDate", values.date?.to);
     const filterValues: EventsFilter = {
       title: values.title,
       location: values.location,
@@ -77,14 +84,18 @@ export default function FilterForm({}: FilterFormProps) {
       author: values.author,
       ageLimit: values.ageLimit,
       needsApproval: values.needsApproval,
+      totalAttendees: values.totalAttendees,
+      isPaymentRequired: values.isPaymentRequired,
     };
 
     console.log("Filter values:", filterValues);
     const events = await getEventsByFilter(filterValues);
     console.log("Events by search:", events);
   }
+
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(9999);
+  const isPaymentRequired = form.watch("isPaymentRequired");
 
   return (
     <Form {...form}>
@@ -115,40 +126,64 @@ export default function FilterForm({}: FilterFormProps) {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="priceRange"
+          name="isPaymentRequired"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price</FormLabel>
-              <p className="text-sm italic">Min</p>
-              <Input
-                value={`${minPrice} kr`}
-                onChange={(e) => setMinPrice(Number(e.target.value))}
-              />
-              <p className="text-sm italic">Max</p>
-              <Input
-                value={`${maxPrice} kr`}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-              />
-              <FormControl>
-                <Slider
-                  value={[minPrice, maxPrice]}
-                  max={9999}
-                  step={10}
-                  minStepsBetweenThumbs={1}
-                  className="p-3"
-                  onValueChange={(value) => {
-                    setMinPrice(value[0]);
-                    setMaxPrice(value[1]);
-                  }}
-                />
-              </FormControl>
+              <div className="flex items-center justify-between">
+                <FormLabel>Free</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={!field.value}
+                    onCheckedChange={(value) => {
+                      queueMicrotask(() => {
+                        field.onChange(!value);
+                      });
+                    }}
+                  />
+                </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
+        {isPaymentRequired && (
+          <FormField
+            control={form.control}
+            name="priceRange"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <p className="text-sm italic">Min</p>
+                <Input
+                  value={`${minPrice} kr`}
+                  onChange={(e) => setMinPrice(Number(e.target.value))}
+                />
+                <p className="text-sm italic">Max</p>
+                <Input
+                  value={`${maxPrice} kr`}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                />
+                <FormControl>
+                  <Slider
+                    value={[minPrice, maxPrice]}
+                    max={9999}
+                    step={10}
+                    minStepsBetweenThumbs={1}
+                    className="p-3"
+                    onValueChange={(value) => {
+                      setMinPrice(value[0]);
+                      setMaxPrice(value[1]);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="location"
@@ -239,6 +274,19 @@ export default function FilterForm({}: FilterFormProps) {
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="totalAttendees"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Total attendees</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -28,4 +28,6 @@ export interface EventsFilter {
   author?: string;
   ageLimit?: number;
   needsApproval?: boolean;
+  totalAttendees?: number;
+  isPaymentRequired?: boolean;
 }

@@ -20,43 +20,22 @@ const getEventsByFilter = async (filterData) => {
     ...(filterData.location && { location: { $regex: filterData.location, $options: "i" } }),
     ...(filterData.ageLimit && { ageLimit: { $gte: Number(filterData.ageLimit) } }),
     ...(filterData.needsApproval !== undefined && { needApproval: filterData.needsApproval === "true" }),
-    ...(filterData.date?.from && filterData.date?.to && {
-      $or: [
-        {
-          // Event med startDate som är inom intervallet
-          startDate: {
-            $gte: new Date(filterData.date.from),
-            $lte: new Date(new Date(filterData.date.to).setHours(23, 59, 59, 999))
-          }
-        },
-        {
-          // Event med endDate som är inom intervallet
-          endDate: {
-            $gte: new Date(filterData.date.from),
-            $lte: new Date(new Date(filterData.date.to).setHours(23, 59, 59, 999))
-          }
-        },
-        {
-          // Event som startar före `from` och slutar efter `to` (dvs. event som täcker hela intervallet)
-          $and: [
-            { startDate: { $lte: new Date(filterData.date.from) } },
-            { endDate: { $gte: new Date(new Date(filterData.date.to).setHours(23, 59, 59, 999)) } }
-          ]
-        }
-      ]
-    })
+  ...(filterData.date?.from && !filterData.date?.to && {
+    startDate: {
+      $gte: new Date(new Date(filterData.date.from).setHours(0, 0, 0, 0)),  
+      $lte: new Date(new Date(filterData.date.from).setHours(23, 59, 59, 999))  
+    }
+  }),
+
+  ...(filterData.date?.from && filterData.date?.to && {
+    startDate: {
+      $gte: new Date(new Date(filterData.date.from).setHours(0, 0, 0, 0)), 
+      $lte: new Date(new Date(filterData.date.to).setHours(23, 59, 59, 999))  
+    }
+  }),
+  isPaymentRequired: filterData.isPaymentRequired === "true",
+  ...(filterData.totalAttendees && {totalAttendees: { $gte: filterData.totalAttendees }}),
   };
-  /* const query = {
-    ...(filterData.title && { title: filterData.title }),
-    ...(filterData.date?.from && filterData.date?.to && {
-      startDate: { $gte: new Date(filterData.date.from) }, 
-      endDate: { $lte: new Date(filterData.date.to) },
-    }),
-    ...(userName && { author: userName }),
-    ...(filterData.location && { location: filterData.location }),
-    ...(filterData.ageLimit && { ageLimit: Number(filterData.ageLimit) }),
-    ...(filterData.needsApproval !== undefined && { needApproval: filterData.needsApproval === "true" }),
-  }; */
 
   const events = await Events.find(query);
   console.log("Events",events);
