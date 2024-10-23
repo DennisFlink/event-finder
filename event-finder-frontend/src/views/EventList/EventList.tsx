@@ -45,7 +45,9 @@ export default function EventList() {
 	}, []);
 
 	return (
-		<Accordion type="single">
+		<Accordion
+			type="single"
+			collapsible>
 			{eventsList.length > 0 ? (
 				eventsList.map((event, index) => (
 					<EventListAccordionItem

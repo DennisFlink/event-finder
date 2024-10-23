@@ -47,8 +47,9 @@ export default function EventListAccordionItem(event: event) {
 					<div className="flex  w-full text-left flex-col">
 						{event.event.title}{' '}
 						<div className="text-xs font-extralight">
-							{event.event.startDate.toString().substring(0, 10)}➡
-							{event.event.endDate.toString().substring(0, 10)}
+							{event.event.startDate.toString().substring(0, 10)}
+							{event.event.endDate &&
+								`➡ ${event.event.endDate.toString().substring(0, 10)}`}
 						</div>
 						<h2 className="underline text-xs">{authorName}</h2>
 					</div>
