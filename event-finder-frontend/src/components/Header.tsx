@@ -4,9 +4,10 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import CreateEventModal from './CreateEventModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
 import { useEffect, useState } from 'react';
-import { IUser } from 'interface/userTypes';
+
+import { useUserStore } from '../store/useUserStore';
 
 type HeaderProps = {
    // TODO
@@ -14,26 +15,14 @@ type HeaderProps = {
 };
 
 export default function Header({}: HeaderProps) {
-   const [user, setUser] = useState<IUser | null>(null);
+   const { user, fetchUserProfile, setUser } = useUserStore();
+
    const location = useLocation();
    const navigate = useNavigate();
 
    useEffect(() => {
-      const fetchUser = async () => {
-         try {
-            const response = await axios.get('http://localhost:3000/api/users/profile', {
-               withCredentials: true,
-            });
-            console.log(response.data);
-            setUser(response.data.user);
-         } catch (error) {
-            console.error('User not logged in');
-            setUser(null);
-         }
-      };
-
-      fetchUser();
-   }, []);
+      fetchUserProfile();
+   }, [fetchUserProfile]);
    const handleLogout = () => {
       console.log('logging out...');
    };
