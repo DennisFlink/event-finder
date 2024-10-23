@@ -9,11 +9,16 @@ export default function Filter({}: FilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <div>
-        <Button onClick={() => setIsOpen(!isOpen)}>
+      <div className="p-2 flex flex-col">
+        <Button className="ml-auto" onClick={() => setIsOpen(!isOpen)}>
           <FilterIcon />
         </Button>
-        {isOpen && <FilterForm />}
+
+        {isOpen && (
+          <div className="">
+            <FilterForm />
+          </div>
+        )}
       </div>
     </>
   );

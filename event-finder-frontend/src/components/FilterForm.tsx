@@ -22,7 +22,10 @@ import { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import { Switch } from "./ui/switch";
+import { getEventsByFilter } from "@/services/eventService";
+import { EventsFilter } from "interface/eventTypes";
 const formSchema = z.object({
+  title: z.string().optional(),
   location: z.string().optional(),
   priceRange: z.array(z.number()).length(2).optional(),
   date: z
@@ -32,7 +35,7 @@ const formSchema = z.object({
     })
     .optional(),
   author: z.string().optional(),
-  ageLimit: z.number().optional(),
+  ageLimit: z.coerce.number().optional(),
   needsApproval: z.boolean().optional(),
 });
 
@@ -48,6 +51,7 @@ export default function FilterForm({}: FilterFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      title: "",
       location: "",
       priceRange: [0, 9999],
       date: {
@@ -60,8 +64,24 @@ export default function FilterForm({}: FilterFormProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const filterValues: EventsFilter = {
+      title: values.title,
+      location: values.location,
+      date: pickedDateRange
+        ? {
+            from: pickedDateRange.from?.toISOString(),
+            to: pickedDateRange.to?.toISOString(),
+          }
+        : undefined,
+      author: values.author,
+      ageLimit: values.ageLimit,
+      needsApproval: values.needsApproval,
+    };
+
+    console.log("Filter values:", filterValues);
+    const events = await getEventsByFilter(filterValues);
+    console.log("Events by search:", events);
   }
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(9999);
@@ -69,6 +89,19 @@ export default function FilterForm({}: FilterFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Event Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Event name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="location"
@@ -89,10 +122,20 @@ export default function FilterForm({}: FilterFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Price</FormLabel>
+              <p className="text-sm italic">Min</p>
+              <Input
+                value={`${minPrice} kr`}
+                onChange={(e) => setMinPrice(Number(e.target.value))}
+              />
+              <p className="text-sm italic">Max</p>
+              <Input
+                value={`${maxPrice} kr`}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+              />
               <FormControl>
                 <Slider
                   value={[minPrice, maxPrice]}
-                  max={999}
+                  max={9999}
                   step={10}
                   minStepsBetweenThumbs={1}
                   className="p-3"
@@ -164,7 +207,7 @@ export default function FilterForm({}: FilterFormProps) {
             <FormItem>
               <FormLabel>Author</FormLabel>
               <FormControl>
-                <Input placeholder="Search location" {...field} />
+                <Input placeholder="Search Author" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -202,7 +245,7 @@ export default function FilterForm({}: FilterFormProps) {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Search</Button>
       </form>
     </Form>
   );
