@@ -5,12 +5,13 @@ import IEvent from "interface/eventTypes";
 import EventListAccordionItem from "@/components/EventListAccordionItem";
 import { useUserStore } from "@/store/useUserStore";
 import Filter from "@/components/Filter";
+import { useEventStore } from "@/store/useEventStore";
 
 export default function EventList() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  const [eventsList, setEventsList] = useState<IEvent[]>([]);
-  const { user } = useUserStore();
 
+  const { user } = useUserStore();
+  const { events, setEvents } = useEventStore();
   // const [user, setUser] = useState<IUser | null>({
   // 	_id: '',
   // 	email: 'tempemail',
@@ -24,7 +25,7 @@ export default function EventList() {
       const response = await axios.get(
         `${BASE_URL}/events/author/${user!._id}`
       );
-      setEventsList(response.data);
+      setEvents(response.data);
     } catch (e) {
       console.error("Error getting user events:", e);
     }
@@ -34,7 +35,7 @@ export default function EventList() {
     try {
       const response = await axios.get(`${BASE_URL}/events`);
 
-      setEventsList(response.data);
+      setEvents(response.data);
     } catch (e) {
       console.error("Error getting all events: ", e);
     }
@@ -49,8 +50,8 @@ export default function EventList() {
     <>
       <Filter />
       <Accordion type="single" collapsible>
-        {eventsList.length > 0 ? (
-          eventsList.map((event, index) => (
+        {events.length > 0 ? (
+          events.map((event, index) => (
             <EventListAccordionItem event={event} index={index} key={index} />
           ))
         ) : (
