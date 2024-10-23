@@ -8,6 +8,7 @@ import {
 	deleteUserByIdController,
 	getUserProfile,
 	logoutController,
+	getUserByIdController,
 } from '../../controller/userController.js';
 const router = Router();
 
@@ -20,6 +21,8 @@ router.post('/logout', authenticate, logoutController);
 router.get('/profile', authenticate, getUserProfile);
 
 router.get('/all', getAllUsersController);
+
+router.get('/:id', getUserByIdController);
 
 router.delete('/delete/:id', deleteUserByIdController);
 

@@ -104,4 +104,5 @@ export {
 	getUserProfile,
 	deleteUserByIdController,
 	logoutController,
+	getUserByIdController,
 };
