@@ -5,7 +5,7 @@ import IEvent from 'interface/eventTypes';
 import EventListAccordionItem from '@/components/EventListAccordionItem';
 
 export default function EventList() {
-	const userId = ''; //temp
+	const userId = axios.get('/profile');
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
 	const [eventsList, setEventsList] = useState<IEvent[]>([]);
 
@@ -32,7 +32,7 @@ export default function EventList() {
 	};
 
 	useEffect(() => {
-		if (userId.length > 1000) {
+		if (userId.length > 1) {
 			getUserEvents();
 		} else {
 			getAllEvents();
