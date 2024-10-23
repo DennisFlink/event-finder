@@ -8,7 +8,7 @@ import {
 const router = Router();
 
 router.get('/', async (req, res) => {
-	const events = await Events.find();
+	const events = await Events.find({ isPrivate: false });
 	res.status(200).json(events);
 });
 

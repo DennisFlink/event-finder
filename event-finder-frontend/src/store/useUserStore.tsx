@@ -4,6 +4,7 @@ import axios from 'axios';
 interface State {
    user: IUser | null;
    fetchUserProfile: () => Promise<void>;
+
    setUser: (user: IUser | null) => void;
 }
 const initialState: State = {
