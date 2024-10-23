@@ -12,11 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 
 const formSchema = z.object({
   location: z.string().optional(),
-  minPrice: z.number().optional(),
-  maxPrice: z.number().optional(),
+  priceRange: z.array(z.number()).length(2).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   author: z.string().optional(),
@@ -31,8 +31,7 @@ export default function FilterForm({}: FilterFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       location: "",
-      minPrice: 0,
-      maxPrice: 0,
+      priceRange: [0, 100],
       startDate: "",
       endDate: "",
       author: "",
@@ -44,6 +43,7 @@ export default function FilterForm({}: FilterFormProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -52,9 +52,33 @@ export default function FilterForm({}: FilterFormProps) {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Location</FormLabel>
               <FormControl>
                 <Input placeholder="Search location" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="priceRange"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price</FormLabel>
+              <FormControl>
+                <Slider
+                  defaultValue={[0, 100]}
+                  max={100}
+                  onValueChange={(value) => {
+                    const [min, max] = value;
+                    const newMin = Math.max(0, min);
+                    const newMax = Math.min(100, max);
+                    field.onChange([newMin, newMax]);
+                  }}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
