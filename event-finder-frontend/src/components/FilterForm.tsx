@@ -25,6 +25,7 @@ import { Calendar } from "./ui/calendar";
 import { Switch } from "./ui/switch";
 import { getEventsByFilter } from "@/services/eventService";
 import { EventsFilter } from "interface/eventTypes";
+import { useEventStore } from "@/store/useEventStore";
 const formSchema = z.object({
   title: z.string().optional(),
   location: z.string().optional(),
@@ -42,9 +43,12 @@ const formSchema = z.object({
   isPaymentRequired: z.boolean().optional(),
 });
 
-type FilterFormProps = {};
+type FilterFormProps = {
+  onClose: () => void;
+};
 
-export default function FilterForm({}: FilterFormProps) {
+export default function FilterForm({ onClose }: FilterFormProps) {
+  const { setEvents } = useEventStore();
   const [pickedDateRange, setPickedDateRange] = React.useState<
     DateRange | undefined
   >({
@@ -88,9 +92,9 @@ export default function FilterForm({}: FilterFormProps) {
       isPaymentRequired: values.isPaymentRequired,
     };
 
-    console.log("Filter values:", filterValues);
     const events = await getEventsByFilter(filterValues);
-    console.log("Events by search:", events);
+    setEvents(events);
+    onClose();
   }
 
   const [minPrice, setMinPrice] = useState(0);
@@ -99,7 +103,10 @@ export default function FilterForm({}: FilterFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid grid-cols-6 gap-5 "
+      >
         <FormField
           control={form.control}
           name="title"
@@ -256,7 +263,12 @@ export default function FilterForm({}: FilterFormProps) {
             <FormItem>
               <FormLabel>Age Limit</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0" {...field} />
+                <Input
+                  className="w-8"
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -293,7 +305,9 @@ export default function FilterForm({}: FilterFormProps) {
           )}
         />
 
-        <Button type="submit">Search</Button>
+        <Button className="ml-auto col-span-4" type="submit">
+          Search
+        </Button>
       </form>
     </Form>
   );

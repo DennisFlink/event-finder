@@ -21,7 +21,6 @@ router.post('/logout', authenticate, logoutController);
 router.get('/profile', authenticate, getUserProfile);
 
 router.get('/all', getAllUsersController);
-
 router.get('/:id', getUserByIdController);
 
 router.delete('/delete/:id', deleteUserByIdController);

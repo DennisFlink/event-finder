@@ -41,3 +41,19 @@ export const getEventsByFilter = async (
     throw new Error();
   }
 };
+
+export const getAllEvents = async (): Promise<IEvent[]> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/events`);
+
+    if (response.status !== 200) {
+      console.error("Error getting all events", response);
+      throw new Error();
+    }
+    const events: IEvent[] = response.data;
+    return events;
+  } catch (error) {
+    console.error("Error getting all events", error);
+    throw new Error();
+  }
+};

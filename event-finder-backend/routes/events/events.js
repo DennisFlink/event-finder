@@ -4,6 +4,7 @@ import {
 	createEventController,
 	deleteEventByIdController,
 	getEventByFilterController,
+	getEventsByUserController,
 } from '../../controller/eventController.js';
 import { get } from 'mongoose';
 const router = Router();
@@ -14,8 +15,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/filter', getEventByFilterController);
+router.get('/filter', getEventByFilterController);
 
 router.post('/', createEventController);
+router.get('/author/:id', getEventsByUserController);
 
 router.delete('/delete/:id', deleteEventByIdController);
 

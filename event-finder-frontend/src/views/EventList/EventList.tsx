@@ -1,22 +1,29 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { Accordion } from '@/components/ui/accordion';
-import IEvent from 'interface/eventTypes';
-import EventListAccordionItem from '@/components/EventListAccordionItem';
+import { useEffect } from 'react';
+import CardContainer from '@/components/CardContainer';
+import { useUserStore } from '@/store/useUserStore';
 import Filter from '@/components/Filter';
+import { useEventStore } from '@/store/useEventStore';
 
 export default function EventList() {
-	const userId = ''; //temp
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
-	const [eventsList, setEventsList] = useState<IEvent[]>([]);
+
+	const { user } = useUserStore();
+	const { events, setEvents } = useEventStore();
+	// const [user, setUser] = useState<IUser | null>({
+	// 	_id: '',
+	// 	email: 'tempemail',
+	// 	password: 'password',
+	// 	username: 'username',
+	// 	dob: new Date('2024-01-01T00:00:00'),
+	// });
 
 	const getUserEvents = async () => {
 		try {
-			console.log('getting user events');
 			const response = await axios.get(
-				`${BASE_URL}/events/author/${userId}`, //replace with logged in user id.
+				`${BASE_URL}/events/author/${user!._id}`,
 			);
-			setEventsList(response.data);
+			setEvents(response.data);
 		} catch (e) {
 			console.error('Error getting user events:', e);
 		}
@@ -24,29 +31,26 @@ export default function EventList() {
 
 	const getAllEvents = async () => {
 		try {
-			console.log('getting all events');
 			const response = await axios.get(`${BASE_URL}/events`);
-			setEventsList(response.data);
+
+			setEvents(response.data);
 		} catch (e) {
 			console.error('Error getting all events: ', e);
 		}
 	};
 
+	//get all events if not currently on the /events/own page
 	useEffect(() => {
-		if (userId.length > 1000) {
-			getUserEvents();
-		} else {
-			getAllEvents();
-		}
-	}, [userId]);
+		getAllEvents();
+	}, []);
 
 	return (
 		<>
 			<Filter />
-			<Accordion type="single">
-				{eventsList.length > 0 ? (
-					eventsList.map((event, index) => (
-						<EventListAccordionItem
+			<div className="flex gap-4 p-4 flex-wrap">
+				{events.length > 0 ? (
+					events.map((event, index) => (
+						<CardContainer
 							event={event}
 							index={index}
 							key={index}
@@ -57,7 +61,7 @@ export default function EventList() {
 						No events to show...
 					</p>
 				)}
-			</Accordion>
+			</div>
 		</>
 	);
 }
