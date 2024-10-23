@@ -24,8 +24,8 @@ export default function EventList() {
 
   const getAllEvents = async () => {
     try {
-      console.log("getting all events");
       const response = await axios.get(`${BASE_URL}/events`);
+
       setEventsList(response.data);
     } catch (e) {
       console.error("Error getting all events: ", e);
@@ -41,19 +41,14 @@ export default function EventList() {
   }, [userId]);
 
   return (
-    <>
-      <Filter />
-      <Accordion type="single">
-        {eventsList.length > 0 ? (
-          eventsList.map((event, index) => (
-            <EventListAccordionItem event={event} index={index} />
-          ))
-        ) : (
-          <p className="flex items-center justify-center">
-            No events to show...
-          </p>
-        )}
-      </Accordion>
-    </>
+    <Accordion type="single">
+      {eventsList.length > 0 ? (
+        eventsList.map((event, index) => (
+          <EventListAccordionItem event={event} index={index} />
+        ))
+      ) : (
+        <p className="flex items-center justify-center">No events to show...</p>
+      )}
+    </Accordion>
   );
 }

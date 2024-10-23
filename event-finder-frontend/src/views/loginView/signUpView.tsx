@@ -13,10 +13,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { createUser } from '@/services/userService';
 import { IUser } from 'interface/userTypes';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 type loginView = {};
 const signupSchema = z.object({ username: z.string().min(2), email: z.string().email(), password: z.string().min(3), date: z.coerce.date() });
 
 export const SignupView: React.FC<loginView> = () => {
+   const navigate = useNavigate();
    const signupForm = useForm<z.infer<typeof signupSchema>>({
       resolver: zodResolver(signupSchema),
       defaultValues: {
@@ -31,6 +33,7 @@ export const SignupView: React.FC<loginView> = () => {
       if ((createdUser as IUser).email) {
          console.log('User created', createdUser);
          signupForm.reset();
+         navigate('/login');
       } else {
          console.log(createdUser);
       }
