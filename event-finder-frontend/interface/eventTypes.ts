@@ -1,8 +1,11 @@
+import { DateRange } from 'react-day-picker';
+
 export default interface IEvent {
+	_id: any;
 	title: string;
 	description?: string;
-	startDate: Date;
-	endDate: Date;
+	startDate: string;
+	endDate?: string;
 	location: string;
 	maxAttendees?: number;
 	attendees?: string[];
@@ -16,5 +19,16 @@ export default interface IEvent {
 	images?: string[];
 	ageLimit?: number;
 	authorId: string;
-	_id: string;
+}
+
+export interface EventsFilter {
+	title?: string;
+	location?: string;
+	priceRange?: number[];
+	date?: { from?: string; to?: string };
+	author?: string;
+	ageLimit?: number;
+	needsApproval?: boolean;
+	totalAttendees?: number;
+	isPaymentRequired?: boolean;
 }

@@ -77,6 +77,7 @@ const getUserProfile = async (req, res) => {
 			.json({ message: 'Internal server error', error: error.message });
 	}
 };
+
 const getUserByIdController = async (req, res) => {
 	const userId = req.params.id;
 	try {
@@ -87,6 +88,7 @@ const getUserByIdController = async (req, res) => {
 		res.status(500).json({ message: 'error', error });
 	}
 };
+
 const deleteUserByIdController = async (req, res) => {
 	const userId = req.params.id;
 	try {

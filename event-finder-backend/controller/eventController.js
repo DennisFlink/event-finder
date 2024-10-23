@@ -1,4 +1,4 @@
-import { createEvent } from '../services/eventService.js';
+import { createEvent, getEventsByFilter } from '../services/eventService.js';
 import Events from '../models/eventSchema.js';
 
 const createEventController = async (req, res) => {
@@ -22,20 +22,15 @@ const deleteEventByIdController = async (req, res) => {
 	}
 };
 
-const getEventsByUserController = async (req, res) => {
-	const userId = req.params.id;
+export const getEventByFilterController = async (req, res) => {
+	const eventsFilter = req.query;
+	console.log('EventsFilter', eventsFilter);
 	try {
-		const events = await Events.find({ authorId: userId });
-		res.status(200).json({ message: 'success', events });
+		const events = await getEventsByFilter(eventsFilter);
+		res.status(200).json(events);
 	} catch (error) {
-		res.status(500).json({
-			message: `error getting event by user: ${userId}, error: ${error}`,
-		});
+		res.status(500).json({ message: 'error getting event by filter', error });
 	}
 };
 
-export {
-	createEventController,
-	deleteEventByIdController,
-	getEventsByUserController,
-};
+export { createEventController, deleteEventByIdController };

@@ -3,8 +3,9 @@ import Events from '../../models/eventSchema.js';
 import {
 	createEventController,
 	deleteEventByIdController,
-	getEventsByUserController,
+	getEventByFilterController,
 } from '../../controller/eventController.js';
+import { get } from 'mongoose';
 const router = Router();
 
 router.get('/', async (req, res) => {
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
 	res.status(200).json(events);
 });
 
-router.get('/author/:id', getEventsByUserController);
+router.get('/filter', getEventByFilterController);
 
 router.post('/', createEventController);
 
