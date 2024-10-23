@@ -1,0 +1,13 @@
+.button-container,
+.add-items-container {
+	display: flex;
+	justify-content: center;
+	border: 1px solid black;
+	flex-wrap: wrap;
+	& > * {
+		margin: 1rem 1rem;
+		width: 40%;
+		padding: 1rem;
+		border: 1px solid black;
+	}
+}

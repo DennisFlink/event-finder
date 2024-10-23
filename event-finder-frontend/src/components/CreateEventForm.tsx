@@ -7,7 +7,7 @@ import * as React from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
-
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -27,6 +27,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import IEvent from "../../interface/eventTypes";
+import { createEvent } from "@/services/eventService";
+import { useNavigate } from "react-router";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(10).max(500),
@@ -34,8 +36,8 @@ const formSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
-  location: z.string(),
-  maxAttendees: z.coerce.number().int().positive(),
+  location: z.string().min(1),
+  maxAttendees: z.coerce.number().int().positive().optional(),
   isPrivate: z.boolean(),
   secretInfo: z.string().optional(),
   isPaymentRequired: z.boolean(),
@@ -50,6 +52,7 @@ const formSchema = z.object({
 type CreateEventFormProps = {};
 
 export default function CreateEventForm({}: CreateEventFormProps) {
+  const navigate = useNavigate();
   const [pickedDateRange, setPickedDateRange] = React.useState<
     DateRange | undefined
   >({
@@ -57,6 +60,8 @@ export default function CreateEventForm({}: CreateEventFormProps) {
     to: addDays(new Date(), 1),
   });
 
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = React.useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,19 +70,21 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       description: "",
       date: pickedDateRange,
       location: "",
-      maxAttendees: 0,
+      maxAttendees: undefined,
       isPrivate: false,
       secretInfo: "",
       isPaymentRequired: false,
-      price: 0,
+      price: undefined,
       isRegisterRequired: false,
       needApproval: false,
       images: [""],
-      ageLimit: 0,
+      isAgeLimit: false,
+      ageLimit: undefined,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     console.log(values);
     const newEvent: IEvent = {
       title: values.title,
@@ -85,21 +92,26 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       startDate: values.date.from,
       endDate: values.date.to,
       location: values.location,
-      maxAttendees: values.maxAttendees,
-      attendees: [],
+      maxAttendees: values.maxAttendees ? values.maxAttendees : 0,
       isPrivate: values.isPrivate,
       secretInfo: values.secretInfo,
       isPaymentRequired: values.isPaymentRequired,
-      userJoinRequests: [],
       price: values.price,
       isRegisterRequired: values.isRegisterRequired,
       needApproval: values.needApproval,
       images: values.images,
-      ageLimit: values.ageLimit,
+      ageLimit: values.ageLimit ? values.ageLimit : 0,
       authorId: "1", // Ändra till inloggad användare id
     };
+    const response = await createEvent(newEvent);
+    setIsLoading(false);
+    form.reset();
+    toast({
+      title: `${response.title} created`,
+      description: `Event has been created`,
+    });
 
-    console.log(newEvent);
+    navigate(-1);
   }
 
   return (
@@ -278,7 +290,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" placeholder="1000" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -367,7 +379,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" placeholder="18" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -377,7 +389,9 @@ export default function CreateEventForm({}: CreateEventFormProps) {
           </div>
         </ScrollArea>
 
-        <Button type="submit">Submit</Button>
+        <Button disabled={isLoading} type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

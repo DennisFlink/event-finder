@@ -3,8 +3,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import apiRouter from './routes/routes.js';
 import cookieParser from 'cookie-parser';
+
 import cors from 'cors';
 const app = express();
+app.use(cookieParser());
 const corsOptions = {
    origin: 'http://localhost:5173', // Allow requests from your frontend origin
    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
@@ -12,7 +14,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.listen(3000, () => console.log('Server is running'));
 app.use('/api', apiRouter);

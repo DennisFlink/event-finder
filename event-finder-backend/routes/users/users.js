@@ -1,14 +1,17 @@
 import { Router } from 'express';
 import User from '../../models/userSchema.js';
-import { createUserController, loginController } from '../../controller/userController.js';
+import authenticate from '../../auth/middleware.js';
+import { createUserController, loginController, getAllUsersController, deleteUserByIdController, getUserProfile } from '../../controller/userController.js';
 const router = Router();
 
 router.post('/signup', createUserController);
 
-/* router.get('/', async (req, res) => {
-   const users = await User.find();
-   res.status(200).json(users);
-}); */
 router.post('/login', loginController);
+
+router.get('/all', getAllUsersController);
+
+router.get('/profile', authenticate, getUserProfile);
+
+router.delete('/delete/:id', deleteUserByIdController);
 
 export const userRouter = router;

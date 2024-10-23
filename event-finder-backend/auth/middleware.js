@@ -1,4 +1,4 @@
-import User from '../models/userSchema';
+import User from '../models/userSchema.js';
 import jwt from 'jsonwebtoken';
 
 const authenticate = async (req, res, next) => {
@@ -17,6 +17,7 @@ const authenticate = async (req, res, next) => {
       }
 
       req.user = user;
+
       next();
    } catch (error) {
       res.status(401).json({ message: 'Invalid token' });
