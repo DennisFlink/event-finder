@@ -30,6 +30,7 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Trash2 } from 'lucide-react';
+import { useUserStore } from '@/store/useUserStore';
 
 type event = {
 	event: IEvent;
@@ -38,19 +39,17 @@ type event = {
 
 export default function CardContainer(event: event) {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
-	const [authorName, setAuthorName] = useState<string>('');
-	const [askForDelete, setAskForDelete] = useState<boolean>(false);
 	const descPreMaxLenght = 105;
+	const [authorName, setAuthorName] = useState<string>('');
+	const { user } = useUserStore();
 
 	useEffect(() => {
 		const getAuthorName = async () => {
 			try {
-				console.log('author id: ', event.event.authorId);
 				const response = await axios.get(
 					`${BASE_URL}/users/${event.event.authorId}`,
 				);
 				setAuthorName(response.data.user.username);
-				console.log('author name: ', authorName);
 			} catch (error) {
 				setAuthorName('unknown author');
 				console.error('Failed to fetch author name');
@@ -59,10 +58,10 @@ export default function CardContainer(event: event) {
 		getAuthorName();
 	}, [event]);
 
-	const deleteEvent = () => {
-		console.log('Attempting to delete event');
+	const deleteEvent = async () => {
 		try {
-			axios.delete(`${BASE_URL}/events/delete/${event.event._id}`);
+			await axios.delete(`${BASE_URL}/events/delete/${event.event._id}`);
+			window.location.reload();
 		} catch (error) {
 			console.error('error removeing event');
 		}
@@ -112,26 +111,28 @@ export default function CardContainer(event: event) {
 					<Link to={`/event/${event.event._id}`}>
 						<Button variant="default">See more</Button>
 					</Link>
-					<AlertDialog>
-						<AlertDialogTrigger>
-							<Trash2 />
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-								<AlertDialogDescription>
-									This will permanently delete your event with no way to recover
-									it. Are you sure?
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter className="flex justify-between">
-								<AlertDialogCancel>Nevermind</AlertDialogCancel>
-								<AlertDialogAction onClick={() => deleteEvent()}>
-									I am sure
-								</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
+					{event.event.authorId === user?._id && (
+						<AlertDialog>
+							<AlertDialogTrigger>
+								<Trash2 />
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+									<AlertDialogDescription>
+										This will permanently delete your event with no way to
+										recover it. Are you sure?
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter className="flex justify-between">
+									<AlertDialogCancel>Nevermind</AlertDialogCancel>
+									<AlertDialogAction onClick={() => deleteEvent()}>
+										I am sure
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					)}
 				</CardFooter>
 			</Card>
 		</>
