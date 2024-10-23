@@ -45,3 +45,18 @@ export const handleLoginUser = async (user: Partial<IUser>) => {
       throw error;
    }
 };
+
+export const handleLogoutUser = async () => {
+   try {
+      await axios.post(
+         'http://localhost:3000/api/users/logout',
+         {},
+         {
+            withCredentials: true,
+         }
+      );
+   } catch (error) {
+      console.error('Logout failed:', error);
+      throw error;
+   }
+};

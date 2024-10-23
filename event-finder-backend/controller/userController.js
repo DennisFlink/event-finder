@@ -25,7 +25,7 @@ const loginController = async (req, res) => {
          secure: false,
          domain: 'localhost',
          path: '/',
-         maxAge: 3600000, // 1 hour
+         maxAge: 86400000, // 24 hours (1 day)
       });
 
       res.status(200).json({ message: 'Login successful', user });
@@ -33,6 +33,21 @@ const loginController = async (req, res) => {
       if (error.message === 'User not found' || error.message === 'Invalid password') {
          return res.status(400).json({ message: error.message });
       }
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+   }
+};
+
+const logoutController = async (req, res) => {
+   try {
+      res.clearCookie('token', {
+         httpOnly: true,
+         secure: false,
+         domain: 'localhost',
+         path: '/',
+      });
+
+      res.status(200).json({ message: 'Logout successful' });
+   } catch (error) {
       res.status(500).json({ message: 'Internal server error', error: error.message });
    }
 };
@@ -73,4 +88,4 @@ const deleteUserByIdController = async (req, res) => {
    }
 };
 
-export { createUserController, loginController, getAllUsersController, getUserProfile, deleteUserByIdController };
+export { createUserController, loginController, getAllUsersController, getUserProfile, deleteUserByIdController, logoutController };

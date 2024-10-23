@@ -1,14 +1,11 @@
 import { Router } from 'express';
 import Events from '../../models/eventSchema.js';
-import {
-	createEventController,
-	deleteEventByIdController,
-} from '../../controller/eventController.js';
+import { createEventController, deleteEventByIdController } from '../../controller/eventController.js';
 const router = Router();
 
 router.get('/', async (req, res) => {
-	const events = await Events.find();
-	res.status(200).json(events);
+   const events = await Events.find({ isPrivate: false });
+   res.status(200).json(events);
 });
 
 router.post('/', createEventController);

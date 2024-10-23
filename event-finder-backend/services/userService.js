@@ -31,7 +31,7 @@ const authenticateUser = async (email, password) => {
       throw new Error('Invalid password');
    }
    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-      expiresIn: '1 hour',
+      expiresIn: '1d',
    });
 
    return { user, token };
