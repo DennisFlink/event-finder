@@ -29,12 +29,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import IEvent from "../../interface/eventTypes";
 import { createEvent } from "@/services/eventService";
 import { useNavigate } from "react-router";
+import { useUserStore } from "@/store/useUserStore";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(10).max(500),
+  isMultipleDays: z.boolean(),
   date: z.object({
     from: z.date(),
-    to: z.date(),
+    to: z.date().optional(),
   }),
   location: z.string().min(1),
   maxAttendees: z.coerce.number().int().positive().optional(),
@@ -57,9 +59,9 @@ export default function CreateEventForm({}: CreateEventFormProps) {
     DateRange | undefined
   >({
     from: new Date(),
-    to: addDays(new Date(), 1),
+    to: undefined,
   });
-
+  const { user, fetchUserProfile } = useUserStore();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
   // 1. Define your form.
@@ -68,6 +70,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
     defaultValues: {
       title: "",
       description: "",
+      isMultipleDays: false,
       date: pickedDateRange,
       location: "",
       maxAttendees: undefined,
@@ -86,11 +89,14 @@ export default function CreateEventForm({}: CreateEventFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     console.log(values);
+    console.log(pickedDateRange?.from);
     const newEvent: IEvent = {
       title: values.title,
       description: values.description,
-      startDate: values.date.from,
-      endDate: values.date.to,
+      startDate: pickedDateRange!.from!.toISOString(),
+      endDate: pickedDateRange!.to
+        ? pickedDateRange!.to!.toISOString()
+        : undefined,
       location: values.location,
       maxAttendees: values.maxAttendees ? values.maxAttendees : 0,
       isPrivate: values.isPrivate,
@@ -101,7 +107,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       needApproval: values.needApproval,
       images: values.images,
       ageLimit: values.ageLimit ? values.ageLimit : 0,
-      authorId: "1", // Ändra till inloggad användare id
+      authorId: user?._id!,
     };
     const response = await createEvent(newEvent);
     setIsLoading(false);
@@ -113,6 +119,10 @@ export default function CreateEventForm({}: CreateEventFormProps) {
 
     navigate(-1);
   }
+
+  const isMultipleDays = form.watch("isMultipleDays");
+  const isPaymentRequired = form.watch("isPaymentRequired");
+  const isAgeLimit = form.watch("isAgeLimit");
 
   return (
     <Form {...form}>
@@ -148,7 +158,89 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 </FormItem>
               )}
             />
-            <div className="flex gap-5">
+            <FormField
+              control={form.control}
+              name="isMultipleDays"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Mulitple days</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          queueMicrotask(() => {
+                            field.onChange(value);
+                          });
+                        }}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {isMultipleDays ? (
+              <div className="flex gap-5">
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date Range</FormLabel>
+                      <FormControl>
+                        <div className={cn("grid gap-2")}>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                id="date"
+                                variant={"outline"}
+                                className={cn(
+                                  "w-[300px] justify-start text-left font-normal",
+                                  !pickedDateRange && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {pickedDateRange?.from ? (
+                                  pickedDateRange.to ? (
+                                    <>
+                                      {format(
+                                        pickedDateRange.from,
+                                        "LLL dd, y"
+                                      )}{" "}
+                                      -{" "}
+                                      {format(pickedDateRange.to, "LLL dd, y")}
+                                    </>
+                                  ) : (
+                                    format(pickedDateRange.from, "LLL dd, y")
+                                  )
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={pickedDateRange?.from}
+                                selected={pickedDateRange}
+                                onSelect={setPickedDateRange}
+                                numberOfMonths={2}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ) : (
               <FormField
                 control={form.control}
                 name="date"
@@ -156,50 +248,41 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                   <FormItem>
                     <FormLabel>Date</FormLabel>
                     <FormControl>
-                      <div className={cn("grid gap-2")}>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              id="date"
-                              variant={"outline"}
-                              className={cn(
-                                "w-[300px] justify-start text-left font-normal",
-                                !pickedDateRange && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {pickedDateRange?.from ? (
-                                pickedDateRange.to ? (
-                                  <>
-                                    {format(pickedDateRange.from, "LLL dd, y")}{" "}
-                                    - {format(pickedDateRange.to, "LLL dd, y")}
-                                  </>
-                                ) : (
-                                  format(pickedDateRange.from, "LLL dd, y")
-                                )
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              initialFocus
-                              mode="range"
-                              defaultMonth={pickedDateRange?.from}
-                              selected={pickedDateRange}
-                              onSelect={setPickedDateRange}
-                              numberOfMonths={2}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[300px] justify-start text-left font-normal",
+                              !pickedDateRange?.from && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {pickedDateRange!.from ? (
+                              format(pickedDateRange!.from, "LLL dd, y")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={pickedDateRange?.from}
+                            onSelect={(date) =>
+                              setPickedDateRange({ from: date, to: undefined })
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
+            )}
+
             <FormField
               control={form.control}
               name="location"
@@ -240,7 +323,11 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          queueMicrotask(() => {
+                            field.onChange(value);
+                          });
+                        }}
                       />
                     </FormControl>
                   </div>
@@ -275,7 +362,11 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          queueMicrotask(() => {
+                            field.onChange(value);
+                          });
+                        }}
                       />
                     </FormControl>
                   </div>
@@ -283,7 +374,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 </FormItem>
               )}
             />
-            {form.watch("isPaymentRequired") && (
+            {isPaymentRequired && (
               <FormField
                 control={form.control}
                 name="price"
@@ -308,7 +399,11 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          queueMicrotask(() => {
+                            field.onChange(value);
+                          });
+                        }}
                       />
                     </FormControl>
                   </div>
@@ -364,7 +459,11 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          queueMicrotask(() => {
+                            field.onChange(value);
+                          });
+                        }}
                       />
                     </FormControl>
                   </div>
@@ -372,7 +471,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
                 </FormItem>
               )}
             />
-            {form.watch("isAgeLimit") && (
+            {isAgeLimit && (
               <FormField
                 control={form.control}
                 name="ageLimit"
