@@ -4,9 +4,10 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import CreateEventModal from './CreateEventModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
 import { useEffect, useState } from 'react';
-import { IUser } from 'interface/userTypes';
+
+import { useUserStore } from '../store/useUserStore';
 
 type HeaderProps = {
    // TODO
@@ -14,31 +15,19 @@ type HeaderProps = {
 };
 
 export default function Header({}: HeaderProps) {
-   const [user, setUser] = useState<IUser | null>(null);
+   const { user, fetchUserProfile } = useUserStore();
+
    const location = useLocation();
    const navigate = useNavigate();
 
    useEffect(() => {
-      const fetchUser = async () => {
-         try {
-            const response = await axios.get('http://localhost:3000/api/users/profile', {
-               withCredentials: true,
-            });
-            console.log(response.data);
-            setUser(response.data.user);
-         } catch (error) {
-            console.error('User not logged in');
-            setUser(null);
-         }
-      };
-
-      fetchUser();
-   }, []);
+      fetchUserProfile();
+   }, [fetchUserProfile]);
    const handleLogout = () => {
       console.log('logging out...');
    };
    const handleGoBack = () => {
-      navigate(-1);
+      navigate('/');
    };
 
    return (
@@ -50,27 +39,40 @@ export default function Header({}: HeaderProps) {
             </Button>
 
             <div className="flex gap-3 items-center justify-end">
-               <p className="font-bold">{user ? `Welcome, ${user.username}` : 'Welcome, Guest'}</p>
-               <DropdownMenu>
-                  <DropdownMenuTrigger>
-                     <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                     </Avatar>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                     <DropdownMenuLabel>My account</DropdownMenuLabel>
-                     <DropdownMenuSeparator />
-                     <DropdownMenuItem>
-                        <Link to="/events/create">Create new event</Link>
-                     </DropdownMenuItem>
-                     <DropdownMenuItem>
-                        <Link to="/events/own">See your events</Link>
-                     </DropdownMenuItem>
-                     <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={() => handleLogout()}>Logout</DropdownMenuItem>
-                  </DropdownMenuContent>
-               </DropdownMenu>
+               <p className="font-bold">{user ? `Welcome, ${user.username}` : ''}</p>
+               {user ? (
+                  <DropdownMenu>
+                     <DropdownMenuTrigger>
+                        <Avatar>
+                           <AvatarImage src="https://github.com/shadcn.png" />
+                           <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent>
+                        <DropdownMenuLabel>My account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                           <Link to="/events/create">Create new event</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                           <Link to="/events/own">See your events</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleLogout()}>Logout</DropdownMenuItem>
+                     </DropdownMenuContent>
+                  </DropdownMenu>
+               ) : (
+                  <div className=" flex gap-4">
+                     <Link to="/login" className="text-primary">
+                        <Button className=" rounded-md">{'Login'}</Button>
+                     </Link>
+                     <Link to="/signup" className="text-primary">
+                        <Button variant="secondary" className="hover:bg-muted/50 rounded-md">
+                           {'Sign Up'}
+                        </Button>
+                     </Link>
+                  </div>
+               )}
             </div>
          </header>
       </>

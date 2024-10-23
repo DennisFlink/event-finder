@@ -3,18 +3,20 @@ import { useEffect, useState } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import IEvent from 'interface/eventTypes';
 import EventListAccordionItem from '@/components/EventListAccordionItem';
-import { IUser } from 'interface/userTypes';
+import { useUserStore } from '@/store/useUserStore';
 
 export default function EventList() {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
 	const [eventsList, setEventsList] = useState<IEvent[]>([]);
-	const [user, setUser] = useState<IUser | null>({
-		_id: '',
-		email: 'tempemail',
-		password: 'password',
-		username: 'username',
-		dob: new Date('2024-01-01T00:00:00'),
-	});
+	const { user } = useUserStore();
+
+	// const [user, setUser] = useState<IUser | null>({
+	// 	_id: '',
+	// 	email: 'tempemail',
+	// 	password: 'password',
+	// 	username: 'username',
+	// 	dob: new Date('2024-01-01T00:00:00'),
+	// });
 
 	const getUserEvents = async () => {
 		try {
@@ -40,25 +42,6 @@ export default function EventList() {
 	//get all events if not currently on the /events/own page
 	useEffect(() => {
 		getAllEvents();
-	}, []);
-
-	useEffect(() => {
-		const fetchUser = async () => {
-			try {
-				const response = await axios.get(
-					'http://localhost:3000/api/users/profile',
-					{
-						withCredentials: true,
-					},
-				);
-				setUser(response.data.user);
-			} catch (error) {
-				console.error('User not logged in');
-				setUser(null);
-			}
-		};
-
-		fetchUser();
 	}, []);
 
 	return (
