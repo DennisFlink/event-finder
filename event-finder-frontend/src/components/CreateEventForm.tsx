@@ -29,6 +29,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import IEvent from "../../interface/eventTypes";
 import { createEvent } from "@/services/eventService";
 import { useNavigate } from "react-router";
+import { useUserStore } from "@/store/useUserStore";
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(10).max(500),
@@ -60,7 +61,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
     from: new Date(),
     to: undefined,
   });
-
+  const { user, fetchUserProfile } = useUserStore();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
   // 1. Define your form.
@@ -106,7 +107,7 @@ export default function CreateEventForm({}: CreateEventFormProps) {
       needApproval: values.needApproval,
       images: values.images,
       ageLimit: values.ageLimit ? values.ageLimit : 0,
-      authorId: "1", // Ändra till inloggad användare id
+      authorId: user?._id!,
     };
     const response = await createEvent(newEvent);
     setIsLoading(false);
