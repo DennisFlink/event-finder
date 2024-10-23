@@ -10,11 +10,9 @@ const createEvent = async (eventData) => {
 
 
 const getEventsByFilter = async (filterData) => {
-  console.log("Filterdata",filterData);
-  /* const user = await User.findOne({ userName: filterData.author });
-  const userName = user.userName;
-  console.log(userName); */
-  console.log("Search date",filterData.date);
+  const user = await User.find({ username: {$regex: filterData.author, $options: "i"} });
+  const userIds = user ? user.map((user) => user._id.toString()) : null;
+
   const query = {
     ...(filterData.title && { title: { $regex: filterData.title, $options: "i" } }), 
     ...(filterData.location && { location: { $regex: filterData.location, $options: "i" } }),
@@ -23,7 +21,7 @@ const getEventsByFilter = async (filterData) => {
   ...(filterData.date?.from && !filterData.date?.to && {
     startDate: {
       $gte: new Date(new Date(filterData.date.from).setHours(0, 0, 0, 0)),  
-      $lte: new Date(new Date(filterData.date.from).setHours(23, 59, 59, 999))  
+      $lte: new Date(new Date(filterData.date.from).setHours(23, 59, 59, 999))
     }
   }),
 
@@ -35,6 +33,7 @@ const getEventsByFilter = async (filterData) => {
   }),
   isPaymentRequired: filterData.isPaymentRequired === "true",
   ...(filterData.totalAttendees && {totalAttendees: { $gte: filterData.totalAttendees }}),
+  ...(userIds.length > 0 && { authorId: { $in: userIds } }),
   };
 
   const events = await Events.find(query);
