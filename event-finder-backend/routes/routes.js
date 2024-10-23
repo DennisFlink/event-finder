@@ -5,5 +5,5 @@ import { eventRouter } from './events/events.js';
 const router = Router();
 
 router.use('/users', userRouter);
-router.use('/events', cors(), eventRouter);
+router.use('/events', eventRouter);
 export default router;
