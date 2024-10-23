@@ -25,7 +25,6 @@ const deleteEventByIdController = async (req, res) => {
 
 export const getEventByFilterController = async (req, res) => {
 	const eventsFilter = req.query;
-	console.log("EventsFilter",eventsFilter);
 	try {
 		const events = await getEventsByFilter(eventsFilter);
 		res.status(200).json(events);
@@ -34,5 +33,17 @@ export const getEventByFilterController = async (req, res) => {
 	}
 }
 
+const getEventsByUserController = async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const events = await Events.find({ authorId: userId });
+        res.status(200).json({ message: 'success', events });
+    } catch (error) {
+        res.status(500).json({
+            message: `error getting event by user: ${userId}, error: ${error}`,
+        });
+    }
+};
 
-export { createEventController, deleteEventByIdController };
+
+export { createEventController, deleteEventByIdController,getEventsByUserController  };

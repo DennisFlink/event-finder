@@ -8,6 +8,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { useUserStore } from '../store/useUserStore';
+import { handleLogoutUser } from '@/services/userService';
 
 type HeaderProps = {
    // TODO
@@ -15,7 +16,7 @@ type HeaderProps = {
 };
 
 export default function Header({}: HeaderProps) {
-   const { user, fetchUserProfile } = useUserStore();
+   const { user, fetchUserProfile, setUser } = useUserStore();
 
    const location = useLocation();
    const navigate = useNavigate();
@@ -23,9 +24,18 @@ export default function Header({}: HeaderProps) {
    useEffect(() => {
       fetchUserProfile();
    }, [fetchUserProfile]);
-   const handleLogout = () => {
-      console.log('logging out...');
+
+   const handleLogout = async () => {
+      console.log('Logging out...');
+      try {
+         await handleLogoutUser();
+         setUser(null);
+         navigate('/');
+      } catch (error) {
+         console.error('Logout failed:', error);
+      }
    };
+
    const handleGoBack = () => {
       navigate('/');
    };

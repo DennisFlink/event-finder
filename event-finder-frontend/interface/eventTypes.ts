@@ -1,6 +1,7 @@
 import { DateRange } from "react-day-picker";
 
 export default interface IEvent {
+  _id: string;
   title: string;
   description?: string;
   startDate: string;
