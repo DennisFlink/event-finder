@@ -9,10 +9,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
-import CreateEventModal from './CreateEventModal';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useUserStore } from '../store/useUserStore';
 import { handleLogoutUser } from '@/services/userService';
@@ -25,7 +24,6 @@ type HeaderProps = {
 export default function Header({}: HeaderProps) {
 	const { user, fetchUserProfile, setUser } = useUserStore();
 
-	const location = useLocation();
 	const navigate = useNavigate();
 
 	useEffect(() => {

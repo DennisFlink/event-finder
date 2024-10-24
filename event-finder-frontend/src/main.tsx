@@ -6,8 +6,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { SignupView } from './views/loginView/signUpView.tsx';
 import { LoginView } from './views/loginView/loginView.tsx';
 import CreateEventModal from './components/CreateEventModal.tsx';
-import EventList from './views/EventList/EventList.tsx';
 import AdminPanel from './views/AdminPanel/AdminPanel.tsx';
+import { EventList } from './views/EventList/EventList.tsx';
 
 const router = createBrowserRouter([
 	{
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '/',
-				element: <EventList />,
+				element: <EventList loadUserEvents={false} />,
 			},
 			{
 				path: 'login',
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: 'events/own',
-				element: <EventList />,
+				element: <EventList loadUserEvents={true} />,
 			},
 			{
 				path: 'admin',

@@ -63,7 +63,7 @@ export default function CardContainer(event: event) {
 			await axios.delete(`${BASE_URL}/events/delete/${event.event._id}`);
 			window.location.reload();
 		} catch (error) {
-			console.error('error removeing event');
+			console.error('error removing event');
 		}
 	};
 
